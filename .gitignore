@@ -28,3 +28,8 @@ pip-log.txt
 
 #vim swp
 *.swp
+
+#virtualenv
+include
+lib
+local
