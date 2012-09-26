@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>OAuth Api Tester</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="A simple oauth api tester">
+    <meta name="author" content="xu.li<AthenaLightenedMyPath@gmail.com>">
+
+    <!-- Le styles -->
+    <link href="http://twitter.github.com/bootstrap/assets/css/bootstrap.css" rel="stylesheet">
+    <link href="http://twitter.github.com/bootstrap/assets/css/bootstrap-responsive.css" rel="stylesheet">
+
+    <!-- Le HTML5 shim, for IE6-8 support of HTML5 elements -->
+    <!--[if lt IE 9]>
+      <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+
+    <!-- Le fav and touch icons -->
+    <link rel="shortcut icon" href="http://twitter.github.com/bootstrap/assets/ico/favicon.ico">
+    <link rel="apple-touch-icon-precomposed" sizes="144x144" href="http://twitter.github.com/bootstrap/assets/ico/apple-touch-icon-144-precomposed.png">
+    <link rel="apple-touch-icon-precomposed" sizes="114x114" href="http://twitter.github.com/bootstrap/assets/ico/apple-touch-icon-114-precomposed.png">
+    <link rel="apple-touch-icon-precomposed" sizes="72x72" href="http://twitter.github.com/bootstrap/assets/ico/apple-touch-icon-72-precomposed.png">
+    <link rel="apple-touch-icon-precomposed" href="http://twitter.github.com/bootstrap/assets/ico/apple-touch-icon-57-precomposed.png">
+  </head>
+
+  <body>
+    <div class="container">
+      <h1>OAuth Api Tester</h1>
+
+      <form id="form_settings">
+        <div class="row">
+          <div class="span4">
+            <legend>Settings</legend>
+            <label for="select_platform">Platform</label>
+            <select id="select_platform">
+              <option value="">-</option>
+              <option value="sina">Sina</option>
+              <option value="tencent">Tencent</option>
+              <option value="renren">Renren</option>
+            </select>
+
+            <label for="input_api">Api</label>
+            <input type="text" id="input_api" />
+
+            <div>
+              <label>Parameters</label>
+              <ul id="ul_parameter_list" class="unstyled">
+              </ul>
+              <a href="#">Add More Parameters</a>
+            </div>
+
+            <div class="form-actions">
+              <button type="submit" class="btn btn-primary">Call</button>
+            </div>
+          </div>
+
+          <div class="span6">
+            <label for="textarea_request">Request</label>
+            <textarea id="textarea_request"></textarea>
+
+            <label for="textarea_response">Response</label>
+            <textarea id="textarea_response"></textarea>
+          </div>
+        </div>
+      </form>
+    </div> <!-- /container -->
+
+    <!-- Le javascript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
+    <script src="http://twitter.github.com/bootstrap/assets/js/bootstrap.min.js"></script>
+    <script src="http://documentcloud.github.com/underscore/underscore-min.js"></script>
+    <script src="http://documentcloud.github.com/backbone/backbone-min.js"></script>
+    <script src="/public/js/app.js"></script>
+  </body>
+</html>
+
