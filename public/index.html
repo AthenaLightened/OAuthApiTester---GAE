@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-    <title>OAuth Api Tester</title>
+    <title>OAuth Api Playground</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="A simple oauth api tester">
     <meta name="author" content="xu.li<AthenaLightenedMyPath@gmail.com>">
@@ -26,42 +26,37 @@
 
   <body>
     <div class="container">
-      <h1>OAuth Api Tester</h1>
-
       <form id="form_settings">
+        <legend>OAuth API Playground</legend>
         <div class="row">
-          <div class="span4">
-            <legend>Settings</legend>
+          <div class="span6">
             <label for="select_platform">Platform</label>
-            <select id="select_platform">
+            <select id="select_platform" class="span2">
               <option value="">-</option>
               <option value="sina">Sina</option>
               <option value="tencent">Tencent</option>
-              <option value="renren">Renren</option>
+              <!--<option value="facebook">Facebook</option>-->
             </select>
 
             <label for="input_api">Api</label>
-            <input type="text" id="input_api" />
+            <input type="text" id="input_api" class="span2" />
 
             <div>
               <label>Parameters</label>
               <ul id="ul_parameter_list" class="unstyled">
               </ul>
-              <a href="#">Add More Parameters</a>
-            </div>
-
-            <div class="form-actions">
-              <button type="submit" class="btn btn-primary">Call</button>
+              <a href="#" id="a_add_more">Add More Parameters</a>
             </div>
           </div>
 
           <div class="span6">
-            <label for="textarea_request">Request</label>
-            <textarea id="textarea_request"></textarea>
-
             <label for="textarea_response">Response</label>
-            <textarea id="textarea_response"></textarea>
+            <textarea id="textarea_response" class="span4" style="height: 400px"></textarea>
           </div>
+        </div>
+
+        <div class="form-actions">
+          <button type="submit" class="btn btn-primary">Call</button>
         </div>
       </form>
     </div> <!-- /container -->
@@ -70,10 +65,19 @@
     ================================================== -->
     <!-- Placed at the end of the document so the pages load faster -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
-    <script src="http://twitter.github.com/bootstrap/assets/js/bootstrap.min.js"></script>
-    <script src="http://documentcloud.github.com/underscore/underscore-min.js"></script>
-    <script src="http://documentcloud.github.com/backbone/backbone-min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/2.1.1/bootstrap.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/underscore.js/1.4.1/underscore-min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/backbone.js/0.9.2/backbone-min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.2/jquery.cookie.js"></script>
     <script src="/public/js/app.js"></script>
+
+<script type="text/template" id="tpl_parameter">
+  <li>
+  <input type="text" class="span2" value="" placeholder="name" /> 
+  <input type="text" class="span4" value="" placeholder="value" />
+  </li>
+</script>
+
   </body>
 </html>
 

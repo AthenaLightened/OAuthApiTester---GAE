@@ -12,5 +12,5 @@ class SinaWBApi(OAuthApi.OAuthApi, OAuthApi.RequestListener):
     self.api_endpoint = "https://api.weibo.com/2"
 
 
-  def onReceiveAccessTokenResponse(self, response):
-    self.uid = response.uid
+  def onReceiveAccessTokenResponse(self, request, response):
+    self.uid = response['uid']

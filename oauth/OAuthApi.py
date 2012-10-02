@@ -90,7 +90,7 @@ class OAuthApi(object):
       response = self.sendOAuthRequest(self.token_endpoint, params, 'POST')
 
       if self.request_listener:
-        self.request_listener.onReceiveAccessTokenResponse(response)
+        self.request_listener.onReceiveAccessTokenResponse(self.token_endpoint, response)
 
       self.access_token = response['access_token']
 
@@ -122,10 +122,11 @@ class OAuthApi(object):
     if self.request_listener:
       api, params, method, headers = self.request_listener.onSendApiRequest(api, params, method, headers)
 
-    response = self.sendOAuthRequest(self.api_endpoint + '/' + api.lstrip('/'), params, method, headers)
+    url = self.api_endpoint + '/' + api.lstrip('/')
+    response = self.sendOAuthRequest(url, params, method, headers)
 
     if self.request_listener:
-      self.request_listener.onReceiveApiResponse(response)
+      self.request_listener.onReceiveApiResponse(url, response)
 
     return response
 
@@ -147,7 +148,7 @@ class OAuthApi(object):
       elif code == 400:
         reason = 'Parameters error'
       else:
-        reason = 'HTTP Error: ' + code
+        reason = 'HTTP Error: ' + str(code)
       raise OAuthApiError(uri, '', reason)
 
     # try decode as json
@@ -284,13 +285,13 @@ class RequestListener(object):
   def onSendAccessTokenRequest(self, params):
     return params
     
-  def onReceiveAccessTokenResponse(self, response):
+  def onReceiveAccessTokenResponse(self, request, response):
     pass
 
   def onSendApiRequest(self, api, params, method, headers):
     return api, params, method, headers
 
-  def onReceiveApiResponse(self, response):
+  def onReceiveApiResponse(self, request, response):
     pass
 
 

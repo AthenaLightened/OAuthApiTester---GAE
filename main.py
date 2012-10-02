@@ -15,11 +15,10 @@
 # limitations under the License.
 #
 import webapp2
+from handlers.SiteHandler import SiteHandler
+from handlers.ApiHandler import ApiHandler
 
-class MainHandler(webapp2.RequestHandler):
-  def get(self):
-    self.redirect("/public/index.html")
-    
+routes = [webapp2.Route(r'/', handler=SiteHandler, name='site'),
+          webapp2.Route(r'/api/<action:[a-zA-Z0-9_-]+>', handler=ApiHandler, name='api')]
 
-app = webapp2.WSGIApplication([('/', MainHandler)],
-                              debug=True)
+app = webapp2.WSGIApplication(routes, debug=True)
