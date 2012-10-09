@@ -17,7 +17,7 @@ class TencentWBApi(OAuthApi.OAuthApi, OAuthApi.RequestListener):
 
   def onSendApiRequest(self, api, params, method, headers):
     if not self.open_id:
-      raise ValueError("openid is required.")
+      raise ValueError("openid not defined")
 
     params['openid'] = self.open_id
     params['format'] = 'json'
@@ -27,9 +27,9 @@ class TencentWBApi(OAuthApi.OAuthApi, OAuthApi.RequestListener):
 
     return api, params, method, headers
 
-  def onReceiveApiResponse(self, request, response):
+  def onReceiveApiResponse(self, request, params, response):
     if 'errcode' in response and str(response['errcode']) != '0':
-      raise OAuthApi.OAuthApiError(request, response, response['msg'])
+      raise OAuthApi.OAuthApiError(request, params, response, response['msg'])
 
 
   def onReceiveAccessTokenResponse(self, request, response):

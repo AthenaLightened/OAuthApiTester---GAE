@@ -53,10 +53,13 @@ class OAuthApi(object):
 
     for attr in ['redirect_uri', 'authorization_endpoint', 'token_endpoint', 'api_endpoint']:
       if attr in kwargs:
-        setattr(self, attr, kwargs[attr].lstrip("/"))
+        setattr(self, attr, kwargs[attr].rstrip("/") + "/")
 
   def getAuthorizationUri(self, state=None, scope=None, redirect_uri=None):
     '''Return the constructed authorization uri'''
+    if not self.authorization_endpoint:
+      raise ValueError("authorization_endpoint not defined")
+
     redirect_uri = self.redirect_uri if redirect_uri is None else redirect_uri
     
     params = [('client_id', self.client_id),
@@ -70,12 +73,12 @@ class OAuthApi(object):
 
     return self.authorization_endpoint + '?' + urllib.urlencode(params)
 
-  def getAccessToken(self, code=None, redirect_uri=None):
+  def getAccessToken(self, code=None, redirect_uri=None, http_method='POST'):
     '''Exchange the authoriazation_code for the access_token, and return it'''
     if code is not None:
       
       if not self.token_endpoint:
-        raise ValueError("Token endpoint required")
+        raise ValueError("token_endpoint not defined")
 
       redirect_uri = self.redirect_uri if redirect_uri is None else redirect_uri
       params = [('client_id', self.client_id),
@@ -87,10 +90,10 @@ class OAuthApi(object):
       if self.request_listener:
         params = self.request_listener.onSendAccessTokenRequest(params)
         
-      response = self.sendOAuthRequest(self.token_endpoint, params, 'POST')
+      response = self.sendOAuthRequest(self.token_endpoint, params, http_method)
 
       if self.request_listener:
-        self.request_listener.onReceiveAccessTokenResponse(self.token_endpoint, response)
+        self.request_listener.onReceiveAccessTokenResponse(self.token_endpoint, params, response)
 
       self.access_token = response['access_token']
 
@@ -108,7 +111,7 @@ class OAuthApi(object):
     headers -- a dict for extra HTTP headers
     '''
     if not self.api_endpoint:
-      raise ValueError("Api endpoint required")
+      raise ValueError("api_endpoint not defined")
 
     if not self.access_token:
       raise ValueError("Access Token required")
@@ -122,11 +125,11 @@ class OAuthApi(object):
     if self.request_listener:
       api, params, method, headers = self.request_listener.onSendApiRequest(api, params, method, headers)
 
-    url = self.api_endpoint + '/' + api.lstrip('/')
+    url = self.api_endpoint + api.lstrip('/')
     response = self.sendOAuthRequest(url, params, method, headers)
 
     if self.request_listener:
-      self.request_listener.onReceiveApiResponse(url, response)
+      self.request_listener.onReceiveApiResponse(url, params, response)
 
     return response
 
@@ -149,7 +152,7 @@ class OAuthApi(object):
         reason = 'Parameters error'
       else:
         reason = 'HTTP Error: ' + str(code)
-      raise OAuthApiError(uri, '', reason)
+      raise OAuthApiError(uri, params, '', reason)
 
     # try decode as json
     try:
@@ -167,19 +170,20 @@ class OAuthApi(object):
     # check error
     if isinstance(decoded, dict) and 'error' in decoded:
       if 'error_description' in decoded:
-        raise OAuthApiError(uri, response, decoded['error_description'])
+        raise OAuthApiError(uri, params, response, decoded['error_description'])
       else:
-        raise OAuthApiError(uri, response, decoded['error'])
+        raise OAuthApiError(uri, params, response, decoded['error'])
     elif isinstance(decoded, (str, unicode)): 
-      raise OAuthApiError(uri, response, decoded)
+      raise OAuthApiError(uri, params, response, decoded)
 
     return decoded
 
 
 class OAuthApiError(Exception):
   
-  def __init__(self, request, response, reason):
+  def __init__(self, request, params, response, reason):
     self.request = request
+    self.params = params
     self.response = response
     self.reason = reason
 
@@ -281,37 +285,28 @@ class RequestSender(object):
 
 
 class RequestListener(object):
+  ''' RequestListener class
+
+  This class is responsible for modifying the values at certain time
+  1. onSendAccessTokenRequest will be called before sending exchange access token request
+  2. onReceiveAccessTokenResponse will be called after receiving the response of access token request
+  3. onSendApiRequest will be called before sending api request
+  4. onReceiveApiResponse will be called after receiving api response
+  '''
   
   def onSendAccessTokenRequest(self, params):
     return params
     
-  def onReceiveAccessTokenResponse(self, request, response):
+  def onReceiveAccessTokenResponse(self, request, params, response):
     pass
 
   def onSendApiRequest(self, api, params, method, headers):
     return api, params, method, headers
 
-  def onReceiveApiResponse(self, request, response):
+  def onReceiveApiResponse(self, request, params, response):
     pass
 
 
 
 if __name__ == '__main__':
   pass
-  # test request sender
-#  sender = RequestSender()
-#  print sender.sendRequest("http://localhost/test.php", {'a': 1}, 'GET')
-#  print sender.sendRequest("http://localhost/test.php", [('a', 1)], 'GET')
-#  print sender.sendRequest("http://localhost/test.php", [('a', 1)], 'POST')
-#  print sender.sendRequest("http://localhost/test.php", [('a', 1), ('file', '@' + os.path.abspath(__file__))], 'POST')
-
-#  o = OAuthApi(client_id='801245460', 
-#            client_secret='d12b828fc77692f9440bb09e77a455fe', 
-#            redirect_uri="http://oauth-api-tester.appspot.com/",
-#            authorization_endpoint="https://open.t.qq.com/cgi-bin/oauth2/authorize",
-#            token_endpoint="https://open.t.qq.com/cgi-bin/oauth2/access_token",
-#            api_endpoint="http://open.t.qq.com/api")
-#  #print o.getAuthorizationUri()
-#  #print o.getAccessToken(code='223a51a78fceebc6adb9ad5202452d90')
-#  o.access_token = '22e060247791b8095f92158e2eb923d2'
-#  pprint.pprint(o.api('user/info'))
